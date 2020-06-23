@@ -15,12 +15,6 @@ namespace RoutingDemo.Controllers {
             _logger = logger;
         }
 
-        private List<Student> students = new List<Student>() {
-                new Student(1, "John", "Kowalski", 35),
-                new Student(2, "Adam", "Smith", 19),
-                new Student(3, "Anna", "Adams", 22)
-            };
-
 
         public IActionResult Index() {
             return View();
@@ -31,18 +25,7 @@ namespace RoutingDemo.Controllers {
         }
 
         public IActionResult Students() {
-            //List<Student> students = new List<Student>() {
-            //    new Student(1, "John", "Kowalski", 35),
-            //    new Student(2, "Adam", "Smith", 19),
-            //    new Student(3, "Anna", "Adams", 22)
-            //};
-            //ViewData["students"] = students;
-
-            //ViewData["student1"] = students[0];
-            //ViewData["student2"] = students[1];
-            //ViewData["student3"] = students[2];
-
-            return View(students);
+            return this.RedirectToAction("Index", "Students");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
