@@ -4,46 +4,48 @@
     ViewData["Title"] = "Students Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Students</h1>
-    <a href="/add">ADD</a>
-    <table class="table">
-        @*data="students"*@
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ID)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FirstName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LastName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Age)
-                </th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var student in Model) {
+    <div class="text-center">
+        <h1 class="display-4">Students</h1>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="Add">ADD</a>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => student.ID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => student.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => student.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => student.Age)
-                    </td>
-                    <td><a href="/edit/1">EDIT</a><a href="/delete/1">DELETE</a></td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Age)
+                    </th>
+                    <th>Actions</th>
                 </tr>
-             }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var student in Model) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => student.ID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => student.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => student.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => student.Age)
+                        </td>
+                        <td>
+                            <a asp-controller="Students" asp-action="Edit" asp-route-id="@student.ID">Edit</a> |
+                            <a asp-controller="Students" asp-action="Delete" asp-route-id="@student.ID">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
