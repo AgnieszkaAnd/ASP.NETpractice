@@ -11,7 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Session;
 using RoutingDemo.Data;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace RoutingDemo {
     public class Startup {
@@ -38,6 +39,9 @@ namespace RoutingDemo {
 
             services.AddDbContext<UserContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("UserContext")));
+
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

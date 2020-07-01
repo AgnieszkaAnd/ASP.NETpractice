@@ -45,12 +45,22 @@ namespace RoutingDemo.Data
         // GET on Login method is in HomeController -> Index
         [HttpPost]
         public async Task<IActionResult> Login([Bind("Password,Email")] User user) {
-            if (ModelState.IsValid) {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("RegisterSuccess");
+            var userData = await _context.User.FindAsync(user.Email);
+
+            if (userData == null) {
+                return NotFound();
+            }
+
+            user.Password = Hasher.GetHashString(user.Password, userData?.FirstName);
+            if (user.Password == userData.Password) {
+                return LoginSuccess();
             }
             return View(user);
+        }
+
+        [HttpGet]
+        public IActionResult LoginSuccess() {
+            return View();
         }
 
         // GET: Users
