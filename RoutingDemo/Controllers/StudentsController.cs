@@ -13,7 +13,12 @@ using Microsoft.AspNetCore.Http;
 namespace RoutingDemo.Controllers {
     //  the data is's provided by controller to the view template
     public class StudentsController : Controller {
-
+        //public readonly ISession _students;
+        public StudentsController() {
+            //if (HttpContext.Session.GetString("Students") == null) {
+            //    HttpContext.Session.SetString("Students", JsonConvert.SerializeObject(students));
+            //}
+        }
         private List<Student> students = new List<Student>() {
                 new Student(1, "John", "Kowalski", 35),
                 new Student(2, "Adam", "Smith", 19),
@@ -30,7 +35,13 @@ namespace RoutingDemo.Controllers {
         // /[Controller]/[ActionName]/[Parameters]
 
         public IActionResult Index() {
-            //var student = new Student(1, "John", "Kowalski", 35);
+
+            // TODO
+            // opakować wnętrze do metody (linie 45-50) i ją wywołać w Index-ie + dodać unit test
+            // HttpContext.Session - użyć MOCKOWANIA        (fakes - coś innego, do generowania danych)
+            // mock tworzony np. w startupie - wykonywany przed unit testami
+            // Unit testy - szczególnie przy większych projektach (długi czas rozwijania + życia) - spr wynik: nie konkretną implementację; spr corner cases
+
             if (HttpContext.Session.GetString("Students") == null) {
                 HttpContext.Session.SetString("Students", JsonConvert.SerializeObject(students));
             }
@@ -51,7 +62,10 @@ namespace RoutingDemo.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Add([Bind("ID","FirstName","LastName","Age")] Student student) {
-            var value = HttpContext.Session.GetString("Students");
+            // TODO: można metodą GetString opakować w metodę - zgodnie z zasadą DRY
+            // może dodać ją do klasy helper
+            var value = HttpContext.Session.GetString("Students"); // w większym projekcie może to być pobierane z zewn serwisu i dodany w DI
+
             List<Student> studentsInIndex = value == null ? null : JsonConvert.DeserializeObject<List<Student>>(value);
 
             int newID = studentsInIndex.Count()+1;
@@ -64,13 +78,15 @@ namespace RoutingDemo.Controllers {
             return this.RedirectToAction("Index", "Students");
         }
 
+
         // GET: /Students/Edit/
         [HttpGet]
         public IActionResult Edit(int id) {
             if (id == null) return BadRequest();
             var value = HttpContext.Session.GetString("Students");
             List<Student> studentsInIndex = value == null ? null : JsonConvert.DeserializeObject<List<Student>>(value);
-            Student s = studentsInIndex[id-1];
+            Student s;
+            try { s = studentsInIndex[id - 1]; } catch (ArgumentOutOfRangeException) { return this.RedirectToAction("Error"); }
             if (s == null) return NotFound();
             return View(s);
         }
@@ -92,7 +108,9 @@ namespace RoutingDemo.Controllers {
             if (id == null) return BadRequest();
             var value = HttpContext.Session.GetString("Students");
             List<Student> studentsInIndex = value == null ? null : JsonConvert.DeserializeObject<List<Student>>(value);
-            Student s = studentsInIndex[id - 1];
+            Student s;
+            try { s = studentsInIndex[id - 1]; } catch (ArgumentOutOfRangeException) { return this.RedirectToAction("Error"); }
+            //Student s = studentsInIndex[id - 1];
             if (s == null) return NotFound();
             return View(s);
         }
@@ -108,9 +126,13 @@ namespace RoutingDemo.Controllers {
             return this.RedirectToAction("Index");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error() {
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
+
         public IActionResult Error() {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }
