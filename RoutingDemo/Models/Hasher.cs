@@ -7,15 +7,18 @@ using System.Threading.Tasks;
 
 namespace RoutingDemo.Models {
     public static class Hasher {
+        private static byte[] GetHash(string inputString, string UserName) {
+            string salt = CreateSalt(UserName);
+            string saltAndPwd = String.Concat(inputString, salt);
 
-        private static byte[] GetHash(string inputString) {
+
             using (HashAlgorithm algorithm = SHA256.Create())
-                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(saltAndPwd));
         }
 
-        public static string GetHashString(string inputString) {
+        public static string GetHashString(string inputString, string UserName) {
             StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetHash(inputString))
+            foreach (byte b in GetHash(inputString, UserName))
                 sb.Append(b.ToString("X2"));
 
             return sb.ToString();

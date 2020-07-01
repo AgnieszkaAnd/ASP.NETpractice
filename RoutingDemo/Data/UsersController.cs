@@ -26,7 +26,7 @@ namespace RoutingDemo.Data
         [HttpPost]
         public async Task<IActionResult> Register([Bind("FirstName,LastName,Password,Email")] User user) {
             if (ModelState.IsValid) {
-                user.Password = Hasher.GetHashString(user.Password);
+                user.Password = Hasher.GetHashString(user.Password, user.FirstName);
 
                 //user.Password - to zahashować; zahashowane hasło to będzie string
                 // guid też jest stringiem, ale podzbiorem stringów
