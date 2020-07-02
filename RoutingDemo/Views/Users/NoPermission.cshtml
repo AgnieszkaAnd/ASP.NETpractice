@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "No Permission";
+}
+
+    <div class="text-center">
+        <h1>You do not have permission to view the resource</h1>
+
+        <h4>Sorry</h4>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

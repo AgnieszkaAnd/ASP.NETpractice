@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RoutingDemo.Models;
 
 namespace RoutingDemo.Data
@@ -63,10 +65,27 @@ namespace RoutingDemo.Data
             return View();
         }
 
+        public IActionResult Logout() {
+            HttpContext.Session.Remove("LoggedUser");
+               
+            return RedirectToAction("Index", "Home");
+    }
+
         // GET: Users
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.User.ToListAsync());
+        public async Task<IActionResult> Index() {
+            if (HttpContext.Session.GetString("LoggedUser") != null) {
+                var loggedUser = HttpContext.Session.GetString("LoggedUser");
+                User user = JsonConvert.DeserializeObject<User>(loggedUser);
+
+                if (user.FirstName == "admin") {
+                    return View(await _context.User.ToListAsync());
+                }
+            }
+            return RedirectToAction("NoPermission");
+        }
+
+        public IActionResult NoPermission() {
+            return View();
         }
 
         // GET: Users/Details/5

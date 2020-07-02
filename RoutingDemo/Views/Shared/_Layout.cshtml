@@ -28,7 +28,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Students">Students</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Users">Users</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="">Users</a>
                         </li>
                         <li class="nav-item">
                             <span>
@@ -39,6 +39,7 @@
                                     var value = Context.Session.GetString("LoggedUser");
                                     User loggedUser = JsonConvert.DeserializeObject<User>(value);
                                     <a>@loggedUser.Email</a>
+                                    <a asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
                                 }
                             </span>
                         </li>
