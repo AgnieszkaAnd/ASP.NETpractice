@@ -10,6 +10,8 @@ namespace RoutingDemo.Models {
         public string LastName { get; set; }
         public int Age { get; set; }
 
+        public Student() { }
+
         public Student(int id, string firstName, string lastName, int age) {
             this.ID = id;
             this.FirstName = firstName;

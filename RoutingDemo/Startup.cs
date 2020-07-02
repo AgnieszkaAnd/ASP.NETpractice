@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Session;
+using RoutingDemo.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace RoutingDemo {
     public class Startup {
@@ -19,7 +24,24 @@ namespace RoutingDemo {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
+            services.AddDistributedMemoryCache();
+
+            // Session uses a cookie to track and identify requests from a single browser. 
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromSeconds(1800);
+                options.Cookie.Name = ".Routing.Session";
+                // Because the cookie default doesn't specify a domain, it isn't made available to the client-side script on the page (because HttpOnly defaults to true).
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddControllersWithViews();
+
+            services.AddDbContext<UserContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("UserContext")));
+
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,10 +60,20 @@ namespace RoutingDemo {
 
             app.UseAuthorization();
 
+            // The order of middleware is important. Call UseSession after UseRouting and before UseEndpoints. See Middleware Ordering.
+            // HttpContext.Session is available after session state is configured.
+            // HttpContext.Session can't be accessed before UseSession has been called.
+            app.UseSession();
+
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "students",
+                    pattern: "{controller=Students}/{action=Index}/{id?}",
+                    constraints: new { id = @"\d+" });
+                    
             });
         }
     }

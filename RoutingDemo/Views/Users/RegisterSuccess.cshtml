@@ -1,0 +1,15 @@
+﻿@model RoutingDemo.Models.User
+
+@{
+    ViewData["Title"] = "Register Successful";
+}
+
+    <div class="text-center">
+        <h1>Register successful</h1>
+
+        <h4>Please check your email to confirm your account</h4>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
