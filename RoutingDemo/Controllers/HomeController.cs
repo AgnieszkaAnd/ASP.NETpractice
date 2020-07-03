@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -53,13 +54,16 @@ namespace RoutingDemo.Controllers {
             var userDataIEnumerable = from u in users
                            where (u.Email == user.Email)
                            select u;
-            var userData = userDataIEnumerable.ToList()[0];
+            var userDataFound = userDataIEnumerable.ToList();
             //var userData = await _context.User.FindAsync(user.Email);
 
-            if (userData == null) {
-                return NotFound();
+            if (userDataFound.Count == 0) {
+                //return NotFound();
+                ModelState.AddModelError("Login", "invalid credentials");
+                //View(); Thread.Sleep(2000);
+                return RedirectToAction("Index", "Home");
             }
-
+            var userData = userDataFound[0];
             user.Password = Hasher.GetHashString(user.Password, userData?.FirstName);
             if (user.Password == userData.Password) {
 
@@ -69,11 +73,16 @@ namespace RoutingDemo.Controllers {
 
                 return RedirectToAction("LoginSuccess");
             }
+            
             return View(user);
         }
 
         [HttpGet]
         public IActionResult LoginSuccess() {
+            return View();
+        }
+
+        public IActionResult NoPermission() {
             return View();
         }
     }

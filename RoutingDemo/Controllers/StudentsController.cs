@@ -46,10 +46,19 @@ namespace RoutingDemo.Controllers {
                 HttpContext.Session.SetString("Students", JsonConvert.SerializeObject(students));
             }
 
-            var value = HttpContext.Session.GetString("Students");
-            List<Student> studentsInIndex = value == null ? null : JsonConvert.DeserializeObject<List<Student>>(value);
+            
+            if (HttpContext.Session.GetString("LoggedUser") != null) {
+                var loggedUser = HttpContext.Session.GetString("LoggedUser");
+                User user = JsonConvert.DeserializeObject<User>(loggedUser);
 
-            return View(studentsInIndex);
+                if (user.FirstName == "admin") {
+                    var value = HttpContext.Session.GetString("Students");
+                    List<Student> studentsInIndex = value == null ? null : JsonConvert.DeserializeObject<List<Student>>(value);
+
+                    return View(studentsInIndex);
+                }
+            }
+            return RedirectToAction("NoPermission", "Home");
         }
 
         // GET: /Students/Add/
