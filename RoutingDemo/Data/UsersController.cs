@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,14 +28,26 @@ namespace RoutingDemo.Data
 
         [HttpPost]
         public async Task<IActionResult> Register([Bind("FirstName,LastName,Password,Email")] User user) {
-            if (ModelState.IsValid) {
-                user.Password = Hasher.GetHashString(user.Password, user.FirstName);
 
-                //user.Password - to zahashować; zahashowane hasło to będzie string
-                // guid też jest stringiem, ale podzbiorem stringów
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("RegisterSuccess");
+            if (ModelState.IsValid) {
+                // The MailAddress class uses a BNF parser to validate the address in full accordance with RFC822.
+                bool isEmailValid = false;
+                try {
+                    MailAddress address = new MailAddress(user.Email);
+                    isEmailValid = (address.Address == user.Email);
+                } catch (FormatException) {
+                    // address is invalid
+                    if (isEmailValid) {
+                        user.Password = Hasher.GetHashString(user.Password, user.FirstName);
+
+                        //user.Password - to zahashować; zahashowane hasło to będzie string
+                        // guid też jest stringiem, ale podzbiorem stringów
+                        _context.Add(user);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction("RegisterSuccess");
+                    }
+                }
+                ModelState.AddModelError("Email", "invalid email");
             }
             return View(user);
         }

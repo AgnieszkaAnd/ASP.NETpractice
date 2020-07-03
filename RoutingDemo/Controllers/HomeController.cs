@@ -53,13 +53,13 @@ namespace RoutingDemo.Controllers {
             var userDataIEnumerable = from u in users
                            where (u.Email == user.Email)
                            select u;
-            var userData = userDataIEnumerable.ToList()[0];
+            var userDataFound = userDataIEnumerable.ToList();
             //var userData = await _context.User.FindAsync(user.Email);
 
-            if (userData == null) {
+            if (userDataFound.Count == 0) {
                 return NotFound();
             }
-
+            var userData = userDataFound[0];
             user.Password = Hasher.GetHashString(user.Password, userData?.FirstName);
             if (user.Password == userData.Password) {
 
