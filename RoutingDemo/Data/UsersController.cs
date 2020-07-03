@@ -81,11 +81,7 @@ namespace RoutingDemo.Data
                     return View(await _context.User.ToListAsync());
                 }
             }
-            return RedirectToAction("NoPermission");
-        }
-
-        public IActionResult NoPermission() {
-            return View();
+            return RedirectToAction("NoPermission", "Home");
         }
 
         // GET: Users/Details/5
@@ -211,6 +207,10 @@ namespace RoutingDemo.Data
         private bool UserExists(int id)
         {
             return _context.User.Any(e => e.ID == id);
+        }
+
+        public IActionResult Error() {
+            return View();
         }
     }
 }

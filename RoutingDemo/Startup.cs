@@ -49,7 +49,7 @@ namespace RoutingDemo {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             } else {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -73,7 +73,19 @@ namespace RoutingDemo {
                     name: "students",
                     pattern: "{controller=Students}/{action=Index}/{id?}",
                     constraints: new { id = @"\d+" });
-                    
+                endpoints.MapControllerRoute(
+                    name: "error",
+                    pattern: "{*any}",
+                    defaults: "{controller=Error}/{action=Index}");
+            });
+
+            app.Use(async (context, next) =>
+            {
+                await next();
+                if (context.Response.StatusCode == 404) {
+                    context.Request.Path = "/Home/Error";
+                    await next();
+                }
             });
         }
     }

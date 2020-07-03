@@ -76,5 +76,9 @@ namespace RoutingDemo.Controllers {
         public IActionResult LoginSuccess() {
             return View();
         }
+
+        public IActionResult NoPermission() {
+            return View();
+        }
     }
 }
