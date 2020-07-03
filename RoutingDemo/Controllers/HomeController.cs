@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +58,10 @@ namespace RoutingDemo.Controllers {
             //var userData = await _context.User.FindAsync(user.Email);
 
             if (userDataFound.Count == 0) {
-                return NotFound();
+                //return NotFound();
+                ModelState.AddModelError("Login", "invalid credentials");
+                //View(); Thread.Sleep(2000);
+                return RedirectToAction("Index", "Home");
             }
             var userData = userDataFound[0];
             user.Password = Hasher.GetHashString(user.Password, userData?.FirstName);
@@ -69,6 +73,7 @@ namespace RoutingDemo.Controllers {
 
                 return RedirectToAction("LoginSuccess");
             }
+            
             return View(user);
         }
 

@@ -49,7 +49,7 @@ namespace RoutingDemo {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             } else {
-                app.UseExceptionHandler("/Error/Error");
+                app.UseExceptionHandler("/Error/Index");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -83,7 +83,7 @@ namespace RoutingDemo {
             {
                 await next();
                 if (context.Response.StatusCode == 404) {
-                    context.Request.Path = "/Home/Error";
+                    context.Request.Path = "/Error/Index";
                     await next();
                 }
             });
